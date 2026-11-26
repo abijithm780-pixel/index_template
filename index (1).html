@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>myPW – Student Service Management</title>
+<style>
+:root{color-scheme:dark;--bg:#0c0d10;--side:#10252b;--card:#1d1f26;--card2:#16181d;--tx:#f2f3f5;--mut:#8b909a;--acc:#2f9fb8;--red:#e5383b;--grn:#2e8b57;--yel:#d9a21b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.4 Inter,system-ui,sans-serif}
+.app{display:flex;min-height:100vh}
+nav{width:84px;background:var(--side);padding:16px 0;display:flex;flex-direction:column;gap:6px;align-items:center}
+nav .logo{font-weight:800;font-size:18px;margin-bottom:14px}
+nav button{background:none;border:0;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;padding:10px 6px;width:70px;border-radius:8px;cursor:pointer}
+nav button .i{font-size:20px}nav button.on{background:#1b3a42;color:#fff}
+main{flex:1;padding:22px;max-width:1100px}
+h1{font-size:20px;margin:0 0 4px}h2{font-size:14px;color:var(--mut);margin:18px 0 10px;font-weight:600}
+.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:20px}
+.hello{background:linear-gradient(120deg,#25272e,#101114);border-radius:12px;padding:18px}
+.hello b{font-size:17px}.hello p{margin:6px 0 0;color:var(--mut)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{background:var(--card);border:0;color:var(--tx);border-radius:12px;padding:16px;text-align:left;cursor:pointer;min-height:110px}
+.tile .ic{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;font-size:18px;margin-bottom:12px}
+.tile small{display:block;color:var(--mut);font-size:11px;margin-top:2px}
+.panel{background:var(--card2);border-radius:12px;padding:14px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px;background:var(--card);border-radius:8px;margin-bottom:6px}
+.row small{color:var(--mut);display:block;font-size:11px}
+.badge{font-size:9px;font-weight:700;padding:3px 7px;border-radius:5px;white-space:nowrap}
+.p{background:#14424d;color:#7fdcf0}.c{background:#2a2d35;color:#aab}
+.map{margin-top:12px;height:90px;border-radius:10px;background:repeating-linear-gradient(45deg,#15181d 0 14px,#1b1f26 14px 28px);display:flex;align-items:flex-end;padding:8px}
+.map span{background:#14424d;color:#cfeff6;font-size:11px;padding:5px 10px;border-radius:14px}
+input,select,textarea{width:100%;background:var(--card);border:1px solid #30333b;color:var(--tx);border-radius:8px;padding:10px;font:inherit;margin-bottom:10px}
+.btn{background:var(--acc);color:#04191e;border:0;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer}
+.btn.g{background:#2a2d35;color:var(--tx)}.btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ds{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:6px 0 14px}
+.node{background:#14424d;border-radius:6px;padding:5px 9px;font-size:12px}.arrow{color:var(--mut)}
+.view{display:none}.view.on{display:block}
+.tag{font-size:11px;color:var(--acc);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#fff;color:#000;padding:10px 16px;border-radius:8px;opacity:0;transition:.3s;pointer-events:none}.toast.on{opacity:1}
+@media(max-width:760px){.grid{grid-template-columns:1fr}nav{width:60px}nav button{width:54px;font-size:9px}main{padding:14px}}
+</style></head><body>
+<div class="app">
+<nav><div class="logo">my<span style="color:var(--acc)">PW</span></div>
+<button data-v="panel" class="on"><span class="i">🏠</span>Dashboard</button>
+<button data-v="zglos"><span class="i">❗</span>Report</button>
+<button data-v="hist"><span class="i">📋</span>History</button>
+<button data-v="search"><span class="i">🔍</span>Search</button></nav>
+<main>
+<section class="view on" id="panel">
+<div class="grid"><div>
+<div class="hello"><b>Hello Jan</b><p id="hl"></p></div>
+<h2>What would you like to do?</h2>
+<div class="tiles">
+<button class="tile" onclick="go('zglos','Urgent')"><div class="ic" style="background:var(--red)">⚠️</div>Urgent request<small>Situation requiring immediate response</small></button>
+<button class="tile" onclick="go('zglos','Problem')"><div class="ic" style="background:#555">🔧</div>Report a problem<small>Faults and technical issues</small></button>
+<button class="tile" onclick="go('zglos','Idea')"><div class="ic" style="background:#f5e2a8">💡</div>I have an idea<small>Your suggestions and improvements</small></button>
+<button class="tile" onclick="go('zglos','Question')"><div class="ic" style="background:#2c5aa0">💬</div>Ask a question<small>Questions about studies and administration</small></button>
+</div></div>
+<div><h2 style="margin-top:0">Recent requests</h2><div class="panel" id="recent"></div>
+<div class="map"><span>📍 Campus navigation</span></div></div></div>
+</section>
+
+<section class="view" id="zglos"><h1>Nowe zgłoszenie</h1><h2>Adds a request to the Queue, the Linked List and the BST</h2>
+<div style="max-width:480px">
+<select id="ftype"><option>Urgent</option><option>Problem</option><option>Idea</option><option>Question</option></select>
+<input id="fname" placeholder="Student name" value="Jan Kowalski">
+<input id="freg" type="number" placeholder="Register number (e.g. 305)">
+<textarea id="ftitle" rows="3" placeholder="Describe your request"></textarea>
+<button class="btn" onclick="submitReq()">Submit request</button></div></section>
+
+<section class="view" id="hist"><h1>History</h1>
+<div class="btns"><button class="btn" onclick="processNext()">Process next (Dequeue)</button><button class="btn g" onclick="undo()">↩ Undo last action (Pop)</button></div>
+<span class="tag">Queue – arrival order (front → back)</span><div class="ds" id="qv"></div>
+<span class="tag">Stack – recent actions (top → bottom)</span><div class="ds" id="sv"></div>
+<span class="tag">Linked list – all records</span><div class="ds" id="lv"></div>
+<div id="hl2"></div></section>
+
+<section class="view" id="search"><h1>Search student records</h1><h2>Binary Search Tree lookup by register number</h2>
+<div class="btns" style="max-width:420px"><input id="sq" type="number" placeholder="Register number" style="margin:0;flex:1"><button class="btn" onclick="doSearch()">Search</button></div>
+<div id="sres"></div></section>
+</main></div><div class="toast" id="toast"></div>
+<script>
+// ---- Data structures ----
+class LNode{constructor(d){this.d=d;this.next=null}}
+class LinkedList{constructor(){this.head=null;this.size=0}
+ add(d){const n=new LNode(d);if(!this.head)this.head=n;else{let c=this.head;while(c.next)c=c.next;c.next=n}this.size++}
+ remove(id){let c=this.head,p=null;while(c){if(c.d.id===id){p?p.next=c.next:this.head=c.next;this.size--;return}p=c;c=c.next}}
+ toArray(){const a=[];let c=this.head;while(c){a.push(c.d);c=c.next}return a}}
+class Queue{constructor(){this.a=[]}enqueue(x){this.a.push(x)}dequeue(){return this.a.shift()}front(x){this.a.unshift(x)}remove(id){this.a=this.a.filter(r=>r.id!==id)}}
+class Stack{constructor(){this.a=[]}push(x){this.a.push(x)}pop(){return this.a.pop()}}
+class BST{constructor(){this.root=null}
+ insert(r){const n={r,l:null,rt:null};if(!this.root){this.root=n;return}let c=this.root;while(1){if(r.reg<c.r.reg){if(!c.l){c.l=n;return}c=c.l}else{if(!c.rt){c.rt=n;return}c=c.rt}}}
+ search(k){const path=[];let c=this.root;while(c){path.push(c.r.reg);if(k===c.r.reg)return{rec:c.r,path};c=k<c.r.reg?c.l:c.rt}return{rec:null,path}}}
+// ---- State ----
+const list=new LinkedList(),queue=new Queue(),stack=new Stack();let tree=new BST(),nid=1;
+const seed=[["Fault - DS Riviera","Problem",305,"Jan Kowalski","P","Today, 10:35"],["Question about ECTS","Question",212,"Anna Nowak","C","02.12.2025"],["Change proposal","Idea",418,"Piotr Zieliński","C","20.11.2025"],["Lost bag","Problem",150,"Maria Lis","C","09.10.2025"],["Fight at the faculty","Urgent",377,"Tomasz Wrona","C","01.08.2025"],["Erasmus enquiry","Question",261,"Ewa Mazur","C","13.08.2025"]];
+function mk(t,ty,reg,nm,st,dt){return{id:nid++,title:t,type:ty,reg:+reg,name:nm,status:st,date:dt}}
+seed.slice().reverse().forEach(s=>{const r=mk(...s);list.add(r);if(r.status==="P")queue.enqueue(r)});
+const rebuild=()=>{tree=new BST();list.toArray().forEach(r=>tree.insert(r))};rebuild();
+const $=id=>document.getElementById(id);
+const badge=s=>s==="P"?'<span class="badge p">IN PROGRESS</span>':'<span class="badge c">CLOSED</span>';
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800)}
+function render(){const all=list.toArray(),n=queue.a.length;
+ $('hl').innerHTML=`You have <b>${n}</b> request(s) in progress<br><small>Last activity: today, 10:42</small>`;
+ $('recent').innerHTML=all.slice(0,6).map(r=>`<div class="row"><div>${r.title}<small>${r.date}</small></div>${badge(r.status)}</div>`).join("");
+ $('qv').innerHTML=queue.a.length?queue.a.map((r,i)=>`<span class="node">#${r.reg} ${r.title}</span>${i<queue.a.length-1?'<span class="arrow">→</span>':''}`).join(""):'<span class="arrow">Queue is empty</span>';
+ $('sv').innerHTML=stack.a.length?stack.a.slice().reverse().map(a=>`<span class="node">${a.kind==="submit"?"Submitted":"Processed"}: ${a.rec.title}</span>`).join('<span class="arrow">↓</span>'):'<span class="arrow">Nothing to undo</span>';
+ $('lv').innerHTML=all.map(r=>`<span class="node">${r.reg}</span><span class="arrow">→</span>`).join("")+'<span class="arrow">null</span>';
+ $('hl2').innerHTML='<h2>Records</h2>'+all.map(r=>`<div class="row"><div>${r.title}<small>${r.name} · reg. ${r.reg} · ${r.type} · ${r.date}</small></div>${badge(r.status)}</div>`).join("")}
+function submitReq(){const reg=$('freg').value,t=$('ftitle').value.trim();if(!reg||!t){toast("Enter register number and description");return}
+ const r=mk(t.slice(0,40),$('ftype').value,reg,$('fname').value||"Student","P","Today");
+ list.add(r);const a=list.toArray();/* newest first */queue.enqueue(r);tree.insert(r);stack.push({kind:"submit",rec:r});
+ $('ftitle').value="";render();toast("Request added to queue");go('hist')}
+function processNext(){const r=queue.dequeue();if(!r){toast("Queue is empty");return}r.status="C";stack.push({kind:"process",rec:r});render();toast("Processed: "+r.title)}
+function undo(){const a=stack.pop();if(!a){toast("Nothing to undo");return}
+ if(a.kind==="submit"){list.remove(a.rec.id);queue.remove(a.rec.id);rebuild()}else{a.rec.status="P";queue.front(a.rec)}
+ render();toast("Undone")}
+function doSearch(){const k=+$('sq').value,{rec,path}=tree.search(k);
+ $('sres').innerHTML=`<div class="ds"><span class="tag">Path:</span>${path.map(p=>`<span class="node">${p}</span>`).join('<span class="arrow">→</span>')}</div>`+
+ (rec?`<div class="row"><div>${rec.name}<small>Reg. ${rec.reg} · ${rec.title} · ${rec.date}</small></div>${badge(rec.status)}</div>`:'<div class="row">No student found with that number.</div>')}
+function go(v,type){document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id===v));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));if(type)$('ftype').value=type;render()}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+render();
+</script></body></html>
